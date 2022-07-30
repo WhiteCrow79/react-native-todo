@@ -6,7 +6,7 @@ import { images } from '../images';
 
 const Icon = styled.Image`
   tint-color: ${({ theme }) => theme.text};
-  witdth: 30px;
+  width: 30px;
   height: 30px;
   margin: 10px;
 `;
