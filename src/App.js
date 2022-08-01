@@ -5,6 +5,7 @@ import { theme } from './theme';
 import Input from './component/Input';
 import Task from './component/Task';
 import { useWindowDimensions } from 'react-native';
+import { setStatusBarNetworkActivityIndicatorVisible } from 'expo-status-bar';
 
 const Container = styled.SafeAreaView`
   flex: 1;
@@ -31,9 +32,32 @@ export default function App() {
 
   const [newTask, setNewTask] = useState('');
 
+  const [tasks, setTask] = useState({
+    1: { id: '1', text: 'Hanbit', complete: false },
+    2: { id: '2', text: 'React Native', complete: true },
+    3: { id: '3', text: 'React Native Sample', completed: false },
+    4: { id: '4', text: 'Edit TODO', compelted: false },
+  });
+
   const _addTask = () => {
-    alert(`Add: ${newTask}`);
+    const ID = Date.now().toString();
+    const newTaskObject = {
+      [ID]: { id: ID, text: newTask, completed: false },
+    };
     setNewTask('');
+    setTask({ ...tasks, ...newTaskObject });
+  };
+
+  const _deleteTask = (id) => {
+    const currentTasks = Object.assign({}, tasks);
+    delete currentTasks[id];
+    setTask(currentTasks);
+  };
+
+  const _toggleTask = (id) => {
+    const currentTasks = Object.assign({}, tasks);
+    currentTasks[id]['completed'] != currentTasks[id]['completed'];
+    setTask(currentTasks);
   };
 
   const _handleTextChange = (text) => {
@@ -55,10 +79,16 @@ export default function App() {
           onSubmitEditing={_addTask}
         />
         <List width={width}>
-          <Task text="Hanbit" />
-          <Task text="React Native" />
-          <Task text="React Native Sample" />
-          <Task text="Edit Todo Items" />
+          {Object.values(tasks)
+            .reverse()
+            .map((item) => (
+              <Task
+                key={item.id}
+                item={item}
+                deleteTask={_deleteTask}
+                toggleTask={_toggleTask}
+              />
+            ))}
         </List>
       </Container>
     </ThemeProvider>
